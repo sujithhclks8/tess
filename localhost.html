@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Test Mobile Camera Access</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+    video { width: 100%; max-width: 400px; border: 2px solid #333; border-radius: 8px; margin-top: 20px; }
+    #status { margin-top: 10px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h2>Camera Access Test</h2>
+  <p>This page will test if your mobile browser can open the camera.</p>
+
+  <video id="video" autoplay playsinline></video>
+  <div id="status">Requesting camera access...</div>
+
+  <script>
+    const video = document.getElementById("video");
+    const statusEl = document.getElementById("status");
+
+    async function testCamera() {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        statusEl.textContent = "❌ Camera API not supported in this browser.";
+        return;
+      }
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "environment" }, // rear camera if available
+          audio: false
+        });
+        video.srcObject = stream;
+        statusEl.textContent = "✅ Camera access granted!";
+      } catch (err) {
+        console.error(err);
+        statusEl.textContent = "❌ Camera access denied or unavailable: " + err.message;
+      }
+    }
+
+    window.onload = testCamera;
+  </script>
+</body>
+</html>
